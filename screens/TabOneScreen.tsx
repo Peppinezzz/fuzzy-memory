@@ -1,50 +1,81 @@
 import * as React from "react";
-import { StyleSheet, FlatList } from "react-native";
+import { StyleSheet, FlatList, TouchableOpacity, Button } from "react-native";
+import { SearchBar } from "react-native-elements";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
 
 import EditScreenInfo from "../components/EditScreenInfo";
 import { Text, View } from "../components/Themed";
 
-import Movie from "../components/Movie";
+import { Movie, movies, movieToComponent } from "../components/Movie";
 
-const parseMoviesData = () => {
-  const movies_json = require("../assets/movies_list.json");
-  const movies = movies_json.Search.filter((m) => m.type == "movie").map(
-    (m) => ({
-      title: m.title !== "" ? m.title : null,
-      year: m.year !== "" ? Number(m.year) : null,
-      imdbId: m.imdbID !== "" ? m.imdbID : null,
-      poster: m.poster !== "" ? m.poster : null,
-    })
-  );
-  return movies;
+const wrapMovieWithLink = (navigation) => {
+  return (m) => {
+    const movie = movieToComponent(m, false);
+    return (
+      <View>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("Root", {
+              screen: "TabTwo",
+              params: {
+                screen: "TabTwoScreen",
+                params: {
+                  movieId: m.item.id,
+                },
+              },
+            })
+          }
+        >
+          {movie}
+        </TouchableOpacity>
+        <Button
+          title="Delete"
+          onPress={() => {
+            const movieValue = movies.find((mov) => mov.id === m.item.id);
+            const movieIndex = movies.indexOf(movieValue);
+            movies.splice(movieIndex, 1);
+            navigation.navigate("Root", {
+              screen: "TabOne",
+              params: {
+                screen: "TabOneScreen",
+                params: {
+                  removedMovieId: m.item.id,
+                },
+              },
+            });
+          }}
+        />
+      </View>
+    );
+  };
 };
 
-const movieToComponent = (m: any) => {
-  const movieData = m.item;
-  return (
-    <Movie
-      poster={movieData.poster}
-      title={movieData.title}
-      year={movieData.year}
-      imdbId={movieData.imdbId}
-    />
-  );
-};
+const TabOneScreen = ({ navigation }) => {
+  const [search, setSearch] = React.useState("");
 
-export default function TabOneScreen() {
-  const movies = parseMoviesData();
+  const renderMovies = movies.filter((m) => m.title.includes(search));
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Some movies for you</Text>
-      <FlatList
-        data={movies}
-        renderItem={movieToComponent}
-        keyExtractor={(item) => item.imdbId}
+      <SearchBar
+        placeholder="Search for movies..."
+        onChangeText={(search) => setSearch(search)}
+        value={search}
       />
+      <Text style={styles.title}>Some movies for you</Text>
+      {renderMovies.length !== 0 ? (
+        <FlatList
+          data={renderMovies}
+          renderItem={wrapMovieWithLink(navigation)}
+          keyExtractor={(item) => item.id}
+        />
+      ) : (
+        <Text>No movies found</Text>
+      )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -62,3 +93,5 @@ const styles = StyleSheet.create({
     width: "80%",
   },
 });
+
+export default TabOneScreen;
