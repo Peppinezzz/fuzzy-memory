@@ -67,6 +67,11 @@ export const movieToComponent = (m: any, detailed: bool) => {
   }
 };
 
+export const movieToImage = (m: any) => {
+  const movieData = m.item;
+  return <Movie imdbId={movieData.imdbId} poster={movieData.poster} />;
+};
+
 const wrapText = (text: string) => <Text style={styles.text}>{text}</Text>;
 
 const Movie = (props: any) => {

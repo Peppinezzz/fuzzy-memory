@@ -9,9 +9,9 @@ import { Text, View } from "../components/Themed";
 
 import { Movie, movies, movieToComponent } from "../components/Movie";
 
-const wrapMovieWithLink = (navigation) => {
+const wrapMovieWithLink = (navigation, renderElement) => {
   return (m) => {
-    const movie = movieToComponent(m, false);
+    const movie = renderElement(m, false);
     return (
       <View>
         <TouchableOpacity
@@ -67,7 +67,7 @@ const TabOneScreen = ({ navigation }) => {
       {renderMovies.length !== 0 ? (
         <FlatList
           data={renderMovies}
-          renderItem={wrapMovieWithLink(navigation)}
+          renderItem={wrapMovieWithLink(navigation, movieToComponent)}
           keyExtractor={(item) => item.id}
         />
       ) : (
