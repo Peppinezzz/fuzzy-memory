@@ -9,12 +9,14 @@ import TabOneScreen from "../screens/TabOneScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import TabThreeScreen from "../screens/TabThreeScreen";
 import TabFourScreen from "../screens/TabFourScreen";
+import TabFiveScreen from "../screens/TabFiveScreen";
 import {
   BottomTabParamList,
   TabOneParamList,
   TabTwoParamList,
   TabThreeParamList,
   TabFourParamList,
+  TabFiveParamList,
 } from "../types";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
@@ -57,6 +59,15 @@ export default function BottomTabNavigator() {
       <BottomTab.Screen
         name="TabFour"
         component={TabFourNavigator}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="ios-code" color={color} />
+          ),
+        }}
+      />
+      <BottomTab.Screen
+        name="TabFive"
+        component={TabFiveNavigator}
         options={{
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="ios-code" color={color} />
@@ -128,5 +139,19 @@ function TabFourNavigator() {
         options={{ headerTitle: "View images" }}
       />
     </TabFourStack.Navigator>
+  );
+}
+
+const TabFiveStack = createStackNavigator<TabFiveParamList>();
+
+function TabFiveNavigator() {
+  return (
+    <TabFiveStack.Navigator>
+      <TabFiveStack.Screen
+        name="TabFiveScreen"
+        component={TabFiveScreen}
+        options={{ headerTitle: "View plots" }}
+      />
+    </TabFiveStack.Navigator>
   );
 }
